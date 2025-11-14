@@ -1,7 +1,11 @@
 from pathlib import Path
+import json
 import cv2 as cv
 import numpy as np
 import logging
+from calculations import crossed_restricted_zone
+
+
 
 def basic_setup():
     # Add classes and assign colors to them
@@ -21,7 +25,7 @@ def basic_setup():
     return net, classes, colors, ln
 
 
-def detect_single_frame(frame, net, classes, colors, output_layers):
+def detect_single_frame(frame, restricted_zone, net, classes, colors, output_layers):
     """
     THIS CODE COMES FROM THE OFFICIAL OPENCV DOCUMENTATION, NOT LLM!
     Here is the link: https://opencv-tutorial.readthedocs.io/en/latest/yolo/yolo.html
@@ -64,10 +68,16 @@ def detect_single_frame(frame, net, classes, colors, output_layers):
             text = "{}: {:.4f}".format(classes[classIDs[i]], confidences[i])
             cv.putText(frame, text, (x, y - 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
 
+    if crossed_restricted_zone(boxes, restricted_zone):
+        cv.putText(frame, "ALARM!", (50,50), cv.FONT_HERSHEY_COMPLEX, 2, (0,0,255), 3, cv.LINE_AA)
+
     cv.imshow('window', frame)
 
 
-def detect_video(video_path: str):
+
+
+def detect_video(video_path: str, restricted_zone: list[list[int]]):
+
     video = cv.VideoCapture(video_path)
 
     frame_id = 0
@@ -80,7 +90,7 @@ def detect_video(video_path: str):
         if frame_id % 150 != 0:
             continue
 
-        detect_single_frame(frame, *basic_setup())
+        detect_single_frame(frame, restricted_zone, *basic_setup())
         if cv.waitKey(1) & 0xFF == 27:
             break
 
