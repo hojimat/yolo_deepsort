@@ -30,6 +30,9 @@ def draw_polygon():
 
     if len(points) < 3:
         logger.error("Please specify at least 3 points for the restricted zone")
-        raise
+        raise ValueError("Please specify at least 3 points")
 
     Path("outputs/polygon.json").write_text(json.dumps(points))
+
+if __name__=='__main__':
+    draw_polygon()
