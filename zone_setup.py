@@ -33,6 +33,3 @@ def draw_polygon():
         raise ValueError("Please specify at least 3 points")
 
     Path("outputs/polygon.json").write_text(json.dumps(points))
-
-if __name__=='__main__':
-    draw_polygon()

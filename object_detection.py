@@ -1,11 +1,10 @@
-from pathlib import Path
-import json
+from collections import deque
 import cv2 as cv
 import numpy as np
 import logging
 from helpers import crossed_restricted_zone
 
-
+logger = logging.getLogger('main')
 
 def basic_setup():
     # Add classes and assign colors to them
@@ -25,7 +24,7 @@ def basic_setup():
     return net, classes, colors, ln
 
 
-def detect_single_frame(frame, restricted_zone, net, classes, colors, output_layers):
+def detect_single_frame(frame, restricted_zone, history, net, classes, colors, output_layers):
     """
     THIS CODE COMES FROM THE OFFICIAL OPENCV DOCUMENTATION, NOT LLM!
     Here is the link: https://opencv-tutorial.readthedocs.io/en/latest/yolo/yolo.html
@@ -74,12 +73,13 @@ def detect_single_frame(frame, restricted_zone, net, classes, colors, output_lay
             text = "{}: {:.4f}".format(classes[classIDs[i]], confidences[i])
             cv.putText(frame, text, (x, y - 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
 
-    if crossed_restricted_zone(boxes, restricted_zone):
+    # add the intersection boolean to the 3 second history window
+    history.append(crossed_restricted_zone(boxes, restricted_zone))
+
+    if any(history):
         cv.putText(frame, "ALARM!", (50,50), cv.FONT_HERSHEY_PLAIN, 2, (0,0,255), 3, cv.LINE_AA)
 
     cv.imshow('window', frame)
-
-
 
 
 def detect_video(video_path: str, restricted_zone: list[list[int]]):
@@ -90,17 +90,25 @@ def detect_video(video_path: str, restricted_zone: list[list[int]]):
 
     video = cv.VideoCapture(video_path)
 
-    frame_id = 0
+    # I check intersection in the last 3 seconds as a rolling window
+    # I am thinking of a queue of size 3 seconds * frames per second
+    # where I push stuff to the queue and always check if any of the last 3 is "True"
+    fps = video.get(cv.CAP_PROP_FPS)
+    last_3_seconds = deque(maxlen=3)
+
+    frame_number = 0
     while True:
         ok, frame = video.read()
         if not ok:
             break
 
-        frame_id += 1
-        if frame_id % 250 != 0:
+        # skip frames to save CPU time
+        frame_number += 1
+        if frame_number % fps != 0:
             continue
 
-        detect_single_frame(frame, restricted_zone, *basic_setup())
+
+        detect_single_frame(frame, restricted_zone, last_3_seconds, *basic_setup())
         if cv.waitKey(1) & 0xFF == 27:
             break
 

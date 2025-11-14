@@ -22,8 +22,7 @@ Test task in computer vision
 ## Initial plan and limitations
 
 - Biggest limitation: time constraints - I am busy in the weekdays, and have other commitments at the weekend.
-- I don't have dedicated GPU, so will use slower models
-- I don't have a strong computer to train stuff, so will use pre-trained OpenCV YOLO
+- I don't have dedicated GPU, so will just use slower pre-trained OpenCV YOLO and will skip frames
 - Most of the code is just using libraries and connecting them (e.g. via JSON) and automating some calculations (e.g. 3 second checks)
 - Have to learn DeepSORT
 
@@ -41,3 +40,24 @@ or, if you want to specify the zone and run video detection:
 python main.py --specify-zone
 ```
 
+** IMPORTANT: you need to include a directory `weights/` where you put `yolov3.cfg`, `yolov3.weights`, `coco.names` manually - they are .gitignored due to the large file size. You can download them here: `https://opencv-tutorial.readthedocs.io/en/latest/yolo/yolo.html`**
+
+The working project directory structure must look like this:
+
+```
+├── inputs
+│   └── test.mp4
+├── outputs
+│   └── ...
+├── weights
+│   ├── coco.names
+│   ├── yolov3.cfg
+│   └── yolov3.weights
+├── config.py
+├── helpers.py
+├── zone_setup.py
+├── object_detection.py
+├── main.py
+├── requirements.txt
+└── README.md
+```
