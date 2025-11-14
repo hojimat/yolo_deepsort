@@ -14,9 +14,8 @@ Test task in computer vision
     - probably, in a separate helper module
     - just coordinate check from JSON file
     - also add helper to write "ALERT" on the frame
-- [ ] GUI for users to click at 4 points and export them to `restricted_zones.json`
-    - not really urgent
-    - if given 3 points, automatically add the closest edge as the 4th point
+- [x] GUI for users to click at points and export them to `restricted_zones.json`
+    - polygon/shape
     - if given <3 points, error
 - [ ] Finalize stuff (dockerize, check versions, check dependencies)
 

@@ -72,8 +72,8 @@ def detect_video(video_path: str):
 
     frame_id = 0
     while True:
-        frame_exists, frame = video.read()
-        if not frame_exists:
+        ok, frame = video.read()
+        if not ok:
             break
 
         frame_id += 1
