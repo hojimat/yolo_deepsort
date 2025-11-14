@@ -69,7 +69,7 @@ def detect_single_frame(frame, restricted_zone, net, classes, colors, output_lay
             cv.putText(frame, text, (x, y - 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
 
     if crossed_restricted_zone(boxes, restricted_zone):
-        cv.putText(frame, "ALARM!", (50,50), cv.FONT_HERSHEY_COMPLEX, 2, (0,0,255), 3, cv.LINE_AA)
+        cv.putText(frame, "ALARM!", (50,50), cv.FONT_HERSHEY_PLAIN, 2, (0,0,255), 3, cv.LINE_AA)
 
     cv.imshow('window', frame)
 
@@ -87,7 +87,7 @@ def detect_video(video_path: str, restricted_zone: list[list[int]]):
             break
 
         frame_id += 1
-        if frame_id % 150 != 0:
+        if frame_id % 50 != 0:
             continue
 
         detect_single_frame(frame, restricted_zone, *basic_setup())
