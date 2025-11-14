@@ -3,7 +3,7 @@ import json
 import cv2 as cv
 import numpy as np
 import logging
-from calculations import crossed_restricted_zone
+from helpers import crossed_restricted_zone
 
 
 
@@ -30,10 +30,16 @@ def detect_single_frame(frame, restricted_zone, net, classes, colors, output_lay
     THIS CODE COMES FROM THE OFFICIAL OPENCV DOCUMENTATION, NOT LLM!
     Here is the link: https://opencv-tutorial.readthedocs.io/en/latest/yolo/yolo.html
     I adapted the code to make it simpler, removed blobs
+
     """
 
     # construct a blob from the image
     blob = cv.dnn.blobFromImage(frame, 1/255.0, (416, 416), swapRB=True, crop=False)
+
+                
+    cv.polylines(frame,
+                 [np.array(restricted_zone, dtype=np.int32).reshape((-1,1,2))],
+                 isClosed=True, color=(0,0,255), thickness=2)
 
     net.setInput(blob)
     outputs = net.forward(output_layers)
@@ -77,6 +83,10 @@ def detect_single_frame(frame, restricted_zone, net, classes, colors, output_lay
 
 
 def detect_video(video_path: str, restricted_zone: list[list[int]]):
+    """
+    THIS CODE COMES FROM TUTORIAL:
+    https://www.geeksforgeeks.org/python/python-opencv-cv2-polylines-method/
+    """
 
     video = cv.VideoCapture(video_path)
 
@@ -87,7 +97,7 @@ def detect_video(video_path: str, restricted_zone: list[list[int]]):
             break
 
         frame_id += 1
-        if frame_id % 50 != 0:
+        if frame_id % 250 != 0:
             continue
 
         detect_single_frame(frame, restricted_zone, *basic_setup())

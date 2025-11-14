@@ -1,4 +1,3 @@
-from cv2.gapi.wip.draw import Poly
 from shapely import Polygon
 
 
