@@ -4,7 +4,7 @@ Test task in computer vision
 # To-do list
 
 - [ ] Learn what DeepSORT is - never heard of it before
-- [ ] Import OpenCV YOLO to detect people from a static frame
+- [x] Import OpenCV YOLO to detect people from a static frame
     - ignore every other object from COCO - only leave people
     - extract bounding boxes from people
 - [ ] Write a function that does YOLO object detection from video
